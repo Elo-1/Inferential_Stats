@@ -113,7 +113,13 @@ gapminder %>%
 ```
 ### Reflection
 
-Seeing from the results above, it can be said that null hypothesis cannot be rejected as our assumption is not statistically significant and that it might as well be that they might as well have almost the same mean life expectancy.
+P-Value Analysis: The p-value of 0.05835 is slightly above the standard alpha level of 0.05. This suggests that the evidence against the null hypothesis is not strong enough to reject it at the 5% significance level. In other words, the data does not provide sufficient evidence to conclude that the mean life expectancy in Ireland is not less than in Switzerland.
+
+Confidence Interval: The 95% confidence interval for the difference in means ranges from negative infinity to 0.1313697. Since the interval includes values both less than and greater than zero, it indicates uncertainty about the true direction of the difference in mean life expectancies.
+
+Effect Size and Practical Significance: While statistical significance is marginal, it's also important to consider the effect size and practical significance. The mean life expectancy in Ireland is 73.01725, and in Switzerland, it is 75.56508. The difference, though statistically uncertain, might still be practically significant in terms of public health planning and policy.
+
+Variability in Life Expectancy: The slightly higher variance and standard deviation in Switzerland suggest more variability in life expectancy compared to Ireland. This aspect could be explored further to understand the factors contributing to this variability.
 
 ## Paired T-Test
 
@@ -173,7 +179,11 @@ H1: The mean life expectancy of Africa in 1957 is same as Africa in 2007
 ```
 ### Reflection
 
-From the above result, we can reject our null hypothesis since our assumption has statistical significance. We
+P-Value Analysis: The extremely low p-value (1.308e-15) strongly suggests rejecting the null hypothesis. This indicates that there is a statistically significant difference in mean life expectancy in Africa between 1957 and 2007.
+
+Effect Size and Confidence Interval: The confidence interval does not include 0 and the effect size (mean difference of 13.53969) is substantial. This further supports the conclusion that life expectancy in Africa has changed significantly over the 50-year period.
+
+Increased Variability: The increase in standard deviation and variance from 1957 to 2007 suggests that the life expectancy across different countries in Africa has become more varied over time.
 
 ## Anova
 
@@ -233,7 +243,8 @@ gapdata  %>%
   summary()
  
 ```
-
+The F-value is 11.63, and the p-value is extremely low (3.42e-05), which is much less than the typical alpha level of 0.05.
+These results suggest that at least one continent has a mean life expectancy that is
 
 
 
@@ -246,11 +257,19 @@ gapdata  %>%
  
 ```
 
+The test shows that the mean life expectancy difference between Europe and Asia is statistically significant (p = 0.0000189).
+The difference between Europe and the Americas is also significant (p = 0.0279460), but the difference between Asia and the Americas is not (p = 0.1432634).
+
+
 ### Reflection
 
-From the 1st results above, we can see that the probability that we can see a difference is very small : 3.42e-05, So we reject the null hypothesis.
-Using the Tukey comparison we can see the combination of continents and see that with respect to Asia-Americas we have the probability p adj 0.1432 and shows statistical significance that there might exist no difference.
-But the other two combination shows no statistical significance and so difference exists
+ANOVA Results: The significant ANOVA results indicate that not all continents have the same mean life expectancy. This strongly suggests rejecting the null hypothesis (H0).
+
+Tukey's HSD Test Insights:
+
+The significant difference in life expectancy between Europe and Asia, as well as Europe and the Americas, implies that Europe tends to have a higher life expectancy compared to the other two continents.
+The lack of a significant difference between Asia and the Americas suggests that their life expectancies are more comparable.
+Variability within Continents: The standard deviation and variance within each continent  would give insights into how life expectancy varies within each continent, which is also important for understanding the overall health and development patterns.
 
 ## Linear regression
 
@@ -285,9 +304,9 @@ ggplot(gapminder %>% filter(continent %in% c("Europe")),
 
 ### Hypothesis
 
-H0: There is no upward or downward relation between Life expectancy and independent GDP per capita in EU
+H0: There is no relationship between life expectancy and GDP per capita in the European Union (EU).
 
-H1: There is a relation between Life expectancy and independent GDP per capita in EU
+H1: There is a relationship between life expectancy and GDP per capita in the EU.
 
 ### Linear model result
 
@@ -299,4 +318,9 @@ summary(lm_model_europe)
 
 ### Reflection
 
-The null hypothesis is not statistically significant( p<2e-16) and hence is rejected. We find a relation between both the variables and we can agree the slope seen in the linear model.
+Statistical Significance: The highly significant p-values for the coefficient of lifeExp and the F-statistic strongly suggest rejecting the null hypothesis. There appears to be a statistically significant relationship between life expectancy and GDP per capita in the EU.
+
+Positive Relationship: The positive coefficient for lifeExp indicates that as life expectancy increases, GDP per capita also tends to increase. This suggests that higher life expectancy in EU countries is associated with higher economic performance.
+
+Model Fit: While the R-squared value is reasonably high, suggesting a good model fit, it's important to note that about 39% of the variance is still unexplained by the model. This indicates that other factors, in addition to life expectancy, also play a significant role in determining GDP per capita.
+
