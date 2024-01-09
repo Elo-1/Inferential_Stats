@@ -284,7 +284,7 @@ ggplot(gapminder, aes(x = gdpPercap, y = lifeExp)) +
        x = "GDP per Capita",
        y = "Life Expectancy") +
   theme_minimal()
-```
+``` 
 
 
 
