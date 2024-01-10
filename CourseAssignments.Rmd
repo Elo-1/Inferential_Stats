@@ -1,0 +1,293 @@
+
+---
+title: "Course Assignments"
+author: "Eldho Paul"
+date: "`r Sys.Date()`"
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+    theme: darkly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(patchwork)
+library(dplyr)
+library(gapminder)
+library(forcats)
+library(readr)
+library(car)
+library(ez)
+```
+
+
+```{r include=FALSE}
+library(readr)
+electric_vehicles <- read_csv("C:/Users/Eldho/OneDrive/Documents/Statistics/Electric_Vehicle_Population_Data.csv")
+population_data <- read_csv("C:/Users/Eldho/OneDrive/Documents/Statistics/world_population_data.csv")
+
+```
+# Electric Vehicle data set
+
+## Independent T-Test
+
+
+### Assumptions
+
+The continuous variable (e.g., 'Electric Range') should be approximately normally distributed within each group.
+The variances of the two groups should be approximately equal.
+The observations are independent of each other.
+
+
+```{r}
+library(dplyr)
+
+# Filter the data for the two makes
+tesla <- electric_vehicles %>% filter(Make == "TESLA")
+nissan <- electric_vehicles %>% filter(Make == "NISSAN")
+
+# You might want to check for normality and equal variances here
+
+```
+
+
+
+### Hypothesis 
+
+H0: There is no significant difference in the mean Electric Range between Tesla and Nissan vehicles.
+
+H1: There is a significant difference in the mean Electric Range between Tesla and Nissan vehicles.
+                    
+
+
+### T-test
+
+```{r}
+# Perform the T-test
+t_test_result <- t.test(`Electric Range` ~ Make, data = electric_vehicles, subset = Make %in% c("TESLA", "NISSAN"))
+
+
+# Print the results
+print(t_test_result)
+
+```
+### Reflection
+
+The negative t-value (-3.3412) indicates that the mean electric range of Nissan vehicles is lower than that of Tesla vehicles.
+
+The p-value (0.0008348) is less than the conventional alpha level of 0.05, suggesting that the observed difference in mean electric range between Nissan and Tesla vehicles is statistically significant.
+
+The 95% confidence interval does not include zero, further supporting the conclusion that there is a significant difference between the two makes. This interval suggests that the true difference in mean electric range between Nissan and Tesla is likely to be between 0.8633158 and 3.3135353 units lower for Nissan vehicles.
+
+The mean electric range of Nissan and Tesla are 82.03942 and 84.12785, respectively. Despite the statistical significance, the practical difference in electric range is relatively small (around 2 units on average).
+
+
+
+## Anova
+
+### Assumptions 
+
+Independence: The observations within each group (vehicle make) must be independent.
+Normality: The distribution of the residuals should be approximately normal. This can be checked using a normality test (like the Shapiro-Wilk test) or visually with a QQ plot.
+Homogeneity of Variances: The variances among groups should be similar.
+
+
+### Hypothesis
+
+H0: The mean electric range is the same across all vehicle makes.
+
+H1: At least one vehicle make has a mean electric range that is significantly different from the others.
+
+
+### Anova result
+```{r }
+anova_result <- aov(`Electric Range` ~ Make, data = electric_vehicles)
+summary(anova_result)
+
+ 
+```
+
+
+### Reflection
+
+Statistical Significance: The extremely low p-value (< 2e-16) strongly indicates a statistically significant difference in the mean electric range among the different vehicle makes. This result is highly significant.
+Variance Between Groups: The high F-value of 490.7 suggests a substantial variation in electric range across vehicle makes compared to the variance within each make.
+Mean Differences: Given the significant p-value, we can conclude that not all vehicle makes have the same average electric range. However, ANOVA itself does not specify which makes are different from each other.
+Follow-up Analysis: To identify specific pairs of vehicle makes with significant differences in electric ranges, post-hoc tests such as Tukey’s HSD are necessary.
+
+## Linear regression
+
+
+### Hypothesis
+
+H0: There is no linear relationship between the model year of a vehicle and its electric range
+
+H1: There is a linear relationship between the model year of a vehicle and its electric range
+
+### Linear model result
+
+```{r }
+linear_model <- lm(`Electric Range` ~ `Model Year`, data = electric_vehicles)
+summary(linear_model)
+
+```
+
+### Reflection
+
+Model Year Coefficient: The coefficient for the 'Model Year' is approximately -14.33. This negative value indicates that, on average, the electric range decreases by about 14.33 units with each advancing model year.
+Statistical Significance: Both the intercept and the 'Model Year' coefficient are highly significant with p-values < 2e-16, indicating a statistically significant relationship between model year and electric range.
+Model Fit: The R-squared value is 0.2083, suggesting that approximately 20.83% of the variability in the electric range can be explained by the model year. While this is a significant proportion, it also indicates that there are other factors influencing electric range that are not captured by the model year alone.
+
+
+
+# World Population data set
+
+## Paired T test
+
+
+### Hypothesis
+
+H0: There is no significant difference in the average population of Asian countries between the first 5-year period (2010-2014) and the second 5-year period (2016-2020).
+
+H1: There is a significant difference in the average population of Asian countries between the first 5-year period (2010-2014) and the second 5-year period (2016-2020).
+
+
+### Assumptions
+
+Paired Observations: The test assumes that the data consists of paired observations. In your case, this assumption is interpreted as comparing two periods (2010 and 2020) for two different groups (continents).
+
+Dependence of Pairs: The paired observations should be dependent. In the typical use of a paired t-test, this would mean that the same subjects are measured twice under different conditions. This assumption might be a stretch in your scenario, as the populations of two continents are independent groups.
+
+Normal Distribution of the Differences: The differences between the paired observations should be approximately normally distributed. 
+
+Random Sampling and Independence of Observations: The data should be a random sample from the population, and the pairs should be independent of each other.
+
+### Result
+
+
+```{r }
+# Filter for Asian countries
+asia_population <- population_data %>%
+  filter(continent == "Asia")
+
+# Reshaping data to long format
+asia_population_long <- asia_population %>%
+  pivot_longer(cols = c(`2023 population`, `2022 population`, `2020 population`, `2015 population`, `2010 population`),
+               names_to = "Year",
+               values_to = "Population") %>%
+  mutate(Year = as.numeric(sub(" population", "", Year)))
+
+# Calculate average population for each period for each country
+asia_avg_population <- asia_population_long %>%
+  group_by(country) %>%
+  summarise(Period1_Avg = mean(Population[Year %in% c(2010, 2011, 2012, 2013, 2014)], na.rm = TRUE),
+            Period2_Avg = mean(Population[Year %in% c(2016, 2017, 2018, 2019, 2020)], na.rm = TRUE)) %>%
+  na.omit()  # Remove rows with NA values
+
+# Check if we have enough data points for each period
+if(nrow(asia_avg_population) > 1) {
+  # Perform the paired t-test
+  t_test_result <- t.test(asia_avg_population$Period1_Avg, asia_avg_population$Period2_Avg, paired = TRUE)
+  print(t_test_result)
+} else {
+  print("Not enough data for a paired t-test")
+}
+
+```
+
+
+### Reflection
+
+Statistical Significance: The paired t-test result shows a p-value of 0.01395, which is less than the conventional threshold of 0.05. This indicates that there is a statistically significant difference in the average population of Asian countries between the two periods.
+
+Direction of Change: The mean difference is approximately -8,860,904 (with a 95% confidence interval from -15,843,538 to -1,878,270). This negative value suggests that, on average, the population in the second period (2016-2020) was lower than in the first period (2010-2014).
+
+Interpreting the Mean Difference: The negative mean difference indicates a decrease in population size over time. This might reflect various demographic trends such as changes in birth rates, death rates, migration patterns, or other socio-economic factors influencing population dynamics in Asian countries.
+
+
+## Repeated Anona test
+
+
+### Hypothesis
+
+H0:There is no significant difference in the average population of Asian (or European) countries across the selected years.
+
+H1: There is a significant difference in the average population of Asian (or European) countries across the selected years.
+
+
+### Assumptions
+
+Normality: The distribution of the populations should be approximately normally distributed within each group for each time point.
+
+Sphericity: The variances of the differences between all combinations of related groups (years, in this case) should be approximately equal. This assumption can be tested using Mauchly's Test of Sphericity.
+
+Independence of Observations: Each subject (country in this case) should be independent of each other.
+
+No Outliers: The data should not have any significant outliers.
+
+### result
+
+``` {r}
+# Identify the columns for different years
+year_columns <- grep("population", names(population_data), value = TRUE)
+
+# Reshaping the data to have a 'Year' column
+population_long <- population_data %>%
+  pivot_longer(cols = all_of(year_columns),
+               names_to = "Year",
+               values_to = "Population") %>%
+  mutate(Year = sub(" population", "", Year))
+
+# Filter and prepare data for Asia and Europe
+asia_population_long <- population_long %>%
+  filter(continent == "Asia", Year %in% c("2010", "2015", "2020", "2022", "2023")) %>%
+  group_by(country, Year) %>%
+  summarize(TotalPopulation = sum(Population, na.rm = TRUE)) %>%
+  ungroup()
+
+europe_population_long <- population_long %>%
+  filter(continent == "Europe", Year %in% c("2010", "2015", "2020", "2022", "2023")) %>%
+  group_by(country, Year) %>%
+  summarize(TotalPopulation = sum(Population, na.rm = TRUE)) %>%
+  ungroup()
+
+# Performing Repeated Measures ANOVA using ezANOVA
+anova_result_asia <- ezANOVA(data = asia_population_long, 
+                             dv = .(TotalPopulation), 
+                             wid = .(country), 
+                             within = .(Year), 
+                             detailed = TRUE, 
+                             type = 3)
+
+anova_result_europe <- ezANOVA(data = europe_population_long, 
+                               dv = .(TotalPopulation), 
+                               wid = .(country), 
+                               within = .(Year), 
+                               detailed = TRUE, 
+                               type = 3)
+
+# Viewing the results
+print(anova_result_asia)
+print(anova_result_europe)
+
+```
+
+### Reflection
+
+Asian Countries:
+Significant Effect of Time: The ANOVA results for Asian countries show a statistically significant effect of 'Year' on the total population (p < 0.00005). This indicates that there are significant differences in the population sizes of Asian countries across the years studied.
+
+Effect Size and Practical Significance: The effect size (ges) for the 'Year' effect is relatively small (0.0002195456), suggesting that while the changes in population over time are statistically significant, the practical significance (impact of these changes) might be relatively small.
+
+Violation of Sphericity: Mauchly's Test for Sphericity is significant (p < 0.05), indicating a violation of the sphericity assumption. This is addressed by the sphericity corrections (Greenhouse-Geisser and Huynh-Feldt), which adjust the degrees of freedom for the F-tests. The significance of the 'Year' effect remains even after these corrections, reinforcing the finding of a significant time effect.
+
+European Countries:
+No Significant Effect of Time: For European countries, the ANOVA results show no statistically significant effect of 'Year' on the total population (p > 0.05). This suggests that the differences in population sizes across the years studied are not statistically significant.
+
+Sphericity Violation and Corrections: Similar to the Asian countries, there is a violation of sphericity for European countries. The corrections applied, however, do not change the overall conclusion that the year effect is not significant for European countries.
+
+
+
+
