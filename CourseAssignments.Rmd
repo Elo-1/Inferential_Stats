@@ -37,7 +37,9 @@ population_data <- read_csv("data/world_population_data.csv")
 ### Assumptions
 
 The continuous variable (e.g., 'Electric Range') should be approximately normally distributed within each group.
+
 The variances of the two groups should be approximately equal.
+
 The observations are independent of each other.
 
 
@@ -90,7 +92,9 @@ The mean electric range of Nissan and Tesla are 82.03942 and 84.12785, respectiv
 ### Assumptions 
 
 Independence: The observations within each group (vehicle make) must be independent.
+
 Normality: The distribution of the residuals should be approximately normal. This can be checked using a normality test (like the Shapiro-Wilk test) or visually with a QQ plot.
+
 Homogeneity of Variances: The variances among groups should be similar.
 
 
@@ -113,8 +117,11 @@ summary(anova_result)
 ### Reflection
 
 Statistical Significance: The extremely low p-value (< 2e-16) strongly indicates a statistically significant difference in the mean electric range among the different vehicle makes. This result is highly significant.
+
 Variance Between Groups: The high F-value of 490.7 suggests a substantial variation in electric range across vehicle makes compared to the variance within each make.
+
 Mean Differences: Given the significant p-value, we can conclude that not all vehicle makes have the same average electric range. However, ANOVA itself does not specify which makes are different from each other.
+
 Follow-up Analysis: To identify specific pairs of vehicle makes with significant differences in electric ranges, post-hoc tests such as Tukey’s HSD are necessary.
 
 ## Linear regression
@@ -137,7 +144,9 @@ summary(linear_model)
 ### Reflection
 
 Model Year Coefficient: The coefficient for the 'Model Year' is approximately -14.33. This negative value indicates that, on average, the electric range decreases by about 14.33 units with each advancing model year.
+
 Statistical Significance: Both the intercept and the 'Model Year' coefficient are highly significant with p-values < 2e-16, indicating a statistically significant relationship between model year and electric range.
+
 Model Fit: The R-squared value is 0.2083, suggesting that approximately 20.83% of the variability in the electric range can be explained by the model year. While this is a significant proportion, it also indicates that there are other factors influencing electric range that are not captured by the model year alone.
 
 
