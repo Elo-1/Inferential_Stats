@@ -25,8 +25,8 @@ library(ez)
 
 ```{r include=FALSE}
 library(readr)
-electric_vehicles <- read_csv("C:/Users/Eldho/OneDrive/Documents/Statistics/Electric_Vehicle_Population_Data.csv")
-population_data <- read_csv("C:/Users/Eldho/OneDrive/Documents/Statistics/world_population_data.csv")
+electric_vehicles <- read_csv("data/Electric_Vehicle_Population_Data.csv")
+population_data <- read_csv("data/world_population_data.csv")
 
 ```
 # Electric Vehicle data set
